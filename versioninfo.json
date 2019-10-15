@@ -1,0 +1,43 @@
+{
+    "FixedFileInfo": {
+        "FileVersion": {
+            "Major": 0,
+            "Minor": 0,
+            "Patch": 1,
+            "Build": 0
+        },
+        "ProductVersion": {
+            "Major": 0,
+            "Minor": 0,
+            "Patch": 1,
+            "Build": 0
+        },
+        "FileFlagsMask": "3f",
+        "FileFlags ": "00",
+        "FileOS": "040004",
+        "FileType": "01",
+        "FileSubType": "00"
+    },
+    "StringFileInfo": {
+        "Comments": "",
+        "CompanyName": "The CSAE Launcher Team",
+        "FileDescription": "CSAE 启动器插件主程序",
+        "FileVersion": "",
+        "InternalName": "CSAE Launcher Plugin",
+        "LegalCopyright": "Copyright (C) 2019. The CSAE Launcher Team. All Rights Reserved.",
+        "LegalTrademarks": "",
+        "OriginalFilename": "CSAE_launcher_Plugin",
+        "PrivateBuild": "",
+        "ProductName": "CSAE 启动器插件",
+        "ProductVersion": "0.0.1.0",
+        "SpecialBuild": ""
+    },
+    "VarFileInfo": {
+        "Translation": {
+            "LangID": "0804",
+            "CharsetID": "04B0"
+        }
+    },
+    "IconPath": "",
+    "ManifestPath": ""
+}

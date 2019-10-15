@@ -1,46 +1,42 @@
 package controller
 
 import (
-    "CSAELauncherPlugin/entity"
-    "CSAELauncherPlugin/utils"
-    "github.com/gin-gonic/gin"
-    "net/http"
+	msg "CSAELauncherPlugin/common"
+	"CSAELauncherPlugin/entity"
+	"CSAELauncherPlugin/utils"
+	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func LaunchController(context *gin.Context) {
-    launchParam := &entity.LaunchParam{}
+	launchParam := &entity.LaunchConfig{}
 
-    err := context.BindJSON(&launchParam)
+	if err := context.BindJSON(&launchParam); nil != err {
+		context.JSON(http.StatusBadRequest, entity.RespBody(msg.ErrApiParam, false, nil))
+	}
 
-    if nil != err {
-        context.String(http.StatusBadRequest, "请求参数错误")
-    }
+	// 判断路径是否为空
+	if "" == launchParam.Path {
+		context.JSON(http.StatusBadRequest, entity.RespBody(msg.ErrLaunchPath, false, nil))
+		return
+	}
 
-    utils.GetPassword(launchParam.Host, launchParam.Token)
+	resCode, err := utils.LaunchGame(launchParam)
 
-    // 判断路径是否为空
-    if "" == launchParam.Path {
-        context.String(http.StatusBadRequest, "路径不能为空")
-        return
-    }
+	if nil != err {
+		context.JSON(http.StatusInternalServerError, entity.RespBody(resCode, false, nil))
+		return
+	}
 
-    // 如果没有HOST就启动游戏
-    if "" == launchParam.Host {
-        if !utils.RunGameOffline(launchParam.Path, launchParam.Param) {
-            context.String(http.StatusInternalServerError, "启动游戏失败")
-        }
-        context.String(http.StatusOK, "成功")
-        return
-    } else {
-
-        if !utils.RunGameOnline(launchParam.Path, launchParam.Param, launchParam.Host, "password") {
-            context.String(http.StatusInternalServerError, "启动游戏失败")
-        }
-        context.String(http.StatusOK, "成功")
-        return
-    }
+	context.JSON(http.StatusOK, entity.RespBodySuccess())
 }
 
 func ChooseFileController(context *gin.Context) {
-    context.String(http.StatusOK, utils.ChooseFile())
+	if filePath, err := utils.ChooseFile(); nil != err {
+		context.JSON(http.StatusOK, entity.RespBody(msg.ErrChooseFail, false, nil))
+	} else if filePath == "cancel" {
+		context.JSON(http.StatusOK, entity.RespBody(msg.ErrChooseCancel, false, nil))
+	} else {
+		context.JSON(http.StatusOK, entity.RespBody(msg.Success, true, filePath))
+	}
 }
