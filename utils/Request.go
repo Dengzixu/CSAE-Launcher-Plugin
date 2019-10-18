@@ -12,16 +12,15 @@ import (
 )
 
 func GetPassword(host string, token string) (*entity.ApiPasswordResp, error) {
-
-	tIp := strings.Split(host, ":")[0]
-	tPort := strings.Split(host, ":")[1]
+	srvIp := strings.Split(host, ":")[0]
+	srvPort := strings.Split(host, ":")[1]
 
 	formData := url.Values{}
 
 	apiPasswordResp := entity.ApiPasswordResp{}
 
-	formData.Add("ip", tIp)
-	formData.Add("port", tPort)
+	formData.Add("ip", srvIp)
+	formData.Add("port", srvPort)
 
 	payload := strings.NewReader(formData.Encode())
 
@@ -51,10 +50,6 @@ func GetPassword(host string, token string) (*entity.ApiPasswordResp, error) {
 
 	_ = json.Unmarshal(bodyBytes, &apiPasswordResp)
 
-	if apiPasswordResp.Code != 0 {
-		return nil, fmt.Errorf("服务器返回值错误")
-	}
-
 	return &apiPasswordResp, nil
 }
 
@@ -67,7 +62,6 @@ func GetUserInfo(token string) (*entity.ApiUserInfoResp, error) {
 		return nil, err
 	}
 
-	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	request.Header.Set("token", token)
 
 	client := &http.Client{}

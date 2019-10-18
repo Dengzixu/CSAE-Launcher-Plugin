@@ -2,18 +2,14 @@
 package main
 
 import (
-	"CSAELauncherPlugin/controller"
+	"CSAELauncherPlugin/common/Init"
+	"CSAELauncherPlugin/runner"
+	"flag"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"github.com/judwhite/go-svc/svc"
-	"github.com/lxn/walk"
-	"log"
-	"net/http"
+	log "github.com/sirupsen/logrus"
 	"sync"
 )
-
-const VERSION = "0.0.1"
-const CHANNEL = "alpha"
 
 type program struct {
 	wg   sync.WaitGroup
@@ -30,13 +26,45 @@ func main() {
 }
 
 func (p *program) Init(env svc.Environment) error {
+	// 初始化日志
+	Init.Logger()
 
-	fmt.Println("注意: 此窗口非常重要，请不要关闭。")
+	// 第一次启动初始化
+	Init.First()
 
-	if !env.IsWindowsService() {
-		fmt.Println("提示: 如果您 *不是* 网吧用户，建议您通过安装包进行安装。")
+	help := flag.Bool("h", true, "获取帮助")
+
+	chooseFile := flag.Bool("c", false, "选择 CSAE 程序路径")
+	setFile := flag.String("C", "", "设置 CSAE `程序路径`")
+
+	runGame := flag.Bool("l", false, "运行离线游戏")
+	server := flag.Bool("s", false, "运行服务")
+
+	flag.Parse()
+
+	flag.Usage = runner.Default
+
+	switch {
+	case *chooseFile:
+		runner.ChooseFile()
+		break
+	case "" != *setFile:
+		runner.UnSupport()
+		break
+	case *runGame:
+		runner.UnSupport()
+		break
+	case *server:
+		fmt.Println("注意: 此窗口非常重要，请不要关闭。")
+		if !env.IsWindowsService() {
+			log.Warn("提示: 如果您 不是 网吧用户，建议您通过安装包进行安装。")
+		}
+		go runner.Service()
+		break
+	case *help:
+		runner.Default()
 	}
-	go RunServer()
+
 	return nil
 }
 
@@ -47,9 +75,9 @@ func (p *program) Start() error {
 
 	p.wg.Add(1)
 	go func() {
-		log.Println("Starting...")
+		log.WithField("component", "Service Control").Info("正在启动服务...")
 		<-p.quit
-		log.Println("Quit signal received...")
+		log.WithField("component", "Service Control").Info("收到退出信号...")
 		p.wg.Done()
 	}()
 
@@ -60,35 +88,9 @@ func (p *program) Stop() error {
 	// The Stop method is invoked by stopping the Windows service, or by pressing Ctrl+C on the console.
 	// This method may block, but it's a good idea to finish quickly or your process may be killed by
 	// Windows during a shutdown/reboot. As a general rule you shouldn't rely on graceful shutdown.
-	log.Println("Stopping...")
+	log.WithField("component", "Service Control").Info("正在停止服务...")
 	close(p.quit)
 	p.wg.Wait()
-	log.Println("Stopped.")
+	log.WithField("component", "Service Control").Info("服务停止.")
 	return nil
-}
-
-func RunServer() {
-	router := gin.Default()
-
-	router.GET("/ping", func(context *gin.Context) {
-		context.String(http.StatusOK, "pong")
-	})
-
-	router.GET("/about", func(context *gin.Context) {
-		context.JSON(http.StatusOK, gin.H{
-			"version": VERSION,
-			"channel": CHANNEL,
-		})
-	})
-
-	router.POST("/launch", controller.LaunchController)
-
-	router.GET("/choose", controller.ChooseFileController)
-
-	err := router.Run("127.0.0.1:23232")
-
-	if err != nil {
-		walk.MsgBox(nil, "CSAE Launcher Plugin", "错误: 初始化失败, 请检查是否同时运行了个本程序，如果无法解决，请联系开发人员。", walk.MsgBoxIconError)
-		fmt.Println("错误: 初始化失败, 请检查是否同时运行了多个本程序，如果无法解决，请联系开发人员。")
-	}
 }

@@ -3,10 +3,9 @@ package utils
 import (
 	"CSAELauncherPlugin/common"
 	"CSAELauncherPlugin/entity"
-	"errors"
+	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
 )
 
 func LaunchGameOffline(path string, param string) (int, error) {
@@ -33,45 +32,63 @@ func LaunchGameOnline(path string, param string, host string, password string) (
 }
 
 func LaunchGame(config *entity.LaunchConfig) (int, error) {
+	sysConfig := ReadConfig()
+
 	// HOST 为空的话 就只启动游戏
 	if "" == config.Host {
-		return LaunchGameOffline(config.Path, config.Option)
+		return LaunchGameOffline(sysConfig.CSAE.Full, config.Option)
 	} else {
-
 		pwdResp, err := GetPassword(config.Host, config.Token)
-		if nil != err {
-			return msg.ErrApi, errors.New("API 返回错误")
+		if nil == err {
+			switch pwdResp.Code {
+			case 403:
+				return msg.ErrApiPermission, fmt.Errorf("未登录或登录过期")
+			default:
+				return msg.ErrApi, fmt.Errorf("未知错误")
+			}
 		}
 
-		userInfoResp, err := GetUserInfo(config.Token)
-		if nil != err {
-			return msg.ErrApi, errors.New("API 返回错误")
+		userInfoResp, err2 := GetUserInfo(config.Token)
+		if nil == err2 {
+			switch userInfoResp.Code {
+			case 403:
+				return msg.ErrApiPermission, fmt.Errorf("未登录或登录过期")
+			default:
+				return msg.ErrApi, fmt.Errorf("未知错误")
+			}
 		}
 
-		if _, err = setConfig(config.Path, userInfoResp.Data.Nickname); nil != err {
+		if _, err = setConfig(sysConfig.CSAE.Dir, userInfoResp.Data.Nickname); nil != err {
 			return msg.ErrWriteConfig, err
 		}
 
-		return LaunchGameOnline(config.Path, config.Option, config.Host, pwdResp.Data.ServerPass)
+		return LaunchGameOnline(sysConfig.CSAE.Full, config.Option, config.Host, pwdResp.Data.ServerPass)
 	}
 }
 
-func setConfig(path string, username string) (int, error) {
-	path, _ = filepath.Split(path)
+func setConfig(dir string, username string) (int, error) {
+	userConfig := `cl_cmdbackup "2"
+cl_cmdrate "100"
+cl_timeout "300"
+cl_updaterate "100"
+console "1.0"
+fps_max "100"
+rate "25000"
+`
 
-	data := "cl_cmdbackup \"2\"\ncl_cmdrate \"100\"\ncl_timeout \"300\"\ncl_updaterate \"100\"\nconsole \"1.0\"\nfps_max \"100\"\nrate \"25000\"\n"
-
-	data += "name " + username + "\n" +
+	userConfig += "name " + username + "\n" +
 		"alias name"
 
-	fileObj, err := os.OpenFile(path+"\\cstrike_schinese\\userconfig.cfg", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	userConfigFile, err := os.OpenFile(dir+"\\cstrike_schinese\\userconfig.cfg", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 
 	if nil != err {
 		return msg.ErrWriteConfig, err
 	}
-	defer fileObj.Close()
-	contents := []byte(data)
-	if _, err := fileObj.Write(contents); err != nil {
+	defer userConfigFile.Close()
+
+	userConfigByte := []byte(userConfig)
+
+	if _, err := userConfigFile.Write(userConfigByte); err != nil {
 		return msg.ErrWriteConfig, err
 	}
 

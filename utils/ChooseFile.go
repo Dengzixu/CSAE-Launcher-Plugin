@@ -12,7 +12,12 @@ func ChooseFile() (string, error) {
 	if ok, err := dlg.ShowOpen(nil); err != nil {
 		return "", err
 	} else if !ok {
-		return "cancel", nil
+		return "选择文件被取消", nil
 	}
+
+	if err := WritePath(dlg.FilePath); nil != err {
+		return "写入配置文件失败", nil
+	}
+
 	return dlg.FilePath, nil
 }

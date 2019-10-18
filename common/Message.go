@@ -34,8 +34,8 @@ var msgTest = map[int]string{
 	ErrChooseCancel:  "路径选择取消",
 	ErrWriteConfig:   "创建配置文件失败",
 	ErrApiParam:      "参数错误",
-	ErrApi:           "API错误",
-	ErrApiPermission: "API权限错误",
+	ErrApi:           "API 错误, 请确认是否登录, 或登录是否过期",
+	ErrApiPermission: "API 错误",
 	ErrUnknown:       "未知错误",
 }
 
