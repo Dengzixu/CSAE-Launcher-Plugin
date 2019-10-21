@@ -1,20 +1,36 @@
 package utils
 
 import (
-	"CSAELauncherPlugin/common"
+	"CSAELauncherPlugin/common/global"
+	"CSAELauncherPlugin/common/msg"
 	"CSAELauncherPlugin/entity"
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 )
 
 func LaunchGameOffline(path string, param string) (int, error) {
-	cmd := exec.Command(path, param)
 
-	if err := cmd.Start(); err != nil {
-		return msg.ErrLaunchFail, err
+	if global.IsService {
+		dir, _ := filepath.Split(path)
+		if err := StartProcessAsCurrentUser(path, param, dir, false); nil != err {
+			return msg.ErrLaunchFail, err
+		}
+	} else {
+		cmd := exec.Command(path, param)
+		if err := cmd.Start(); err != nil {
+			return msg.ErrLaunchFail, err
+		}
 	}
 	return msg.Success, nil
+
+	//cmd := exec.Command(path, param)
+	//
+	//if err := cmd.Start(); err != nil {
+	//	return msg.ErrLaunchFail, err
+	//}
+	//return msg.Success, nil
 }
 
 func LaunchGameOnline(path string, param string, host string, password string) (int, error) {
@@ -23,10 +39,19 @@ func LaunchGameOnline(path string, param string, host string, password string) (
 	}
 	param += " +connect " + host
 
-	cmd := exec.Command(path, param)
+	if global.IsService {
+		dir, _ := filepath.Split(path)
 
-	if err := cmd.Start(); err != nil {
-		return msg.ErrLaunchFail, err
+		StartProcessAsCurrentUser(path, param, dir, false)
+
+		if err := StartProcessAsCurrentUser(path, param, dir, false); nil != err {
+			return msg.ErrLaunchFail, err
+		}
+	} else {
+		cmd := exec.Command(path, param)
+		if err := cmd.Start(); err != nil {
+			return msg.ErrLaunchFail, err
+		}
 	}
 	return msg.Success, nil
 }
@@ -38,31 +63,39 @@ func LaunchGame(config *entity.LaunchConfig) (int, error) {
 	if "" == config.Host {
 		return LaunchGameOffline(sysConfig.CSAE.Full, config.Option)
 	} else {
-		pwdResp, err := GetPassword(config.Host, config.Token)
-		if nil == err {
-			switch pwdResp.Code {
-			case 403:
-				return msg.ErrApiPermission, fmt.Errorf("未登录或登录过期")
-			default:
-				return msg.ErrApi, fmt.Errorf("未知错误")
+
+		// 密码方式
+		serverPassword := ""
+		switch config.Password {
+		// 启动器启动
+		case "#LAUNCHER#":
+			pwdResp, err := GetPassword(config.Host, config.Token)
+			if nil != err {
+				return msg.ErrApiNetwork, fmt.Errorf(msg.GetMsg(msg.ErrApiNetwork))
+			} else if 0 != pwdResp.Code {
+				return msg.ErrApiPermission, fmt.Errorf(msg.GetMsg(msg.ErrApiPermission))
+			} else {
+				serverPassword = pwdResp.Data.ServerPass
 			}
+		case "#NOPASSWORD#":
+			serverPassword = ""
+		default:
+			serverPassword = config.Password
 		}
 
+		// 获取用户昵称
 		userInfoResp, err2 := GetUserInfo(config.Token)
-		if nil == err2 {
-			switch userInfoResp.Code {
-			case 403:
-				return msg.ErrApiPermission, fmt.Errorf("未登录或登录过期")
-			default:
-				return msg.ErrApi, fmt.Errorf("未知错误")
-			}
+		if nil != err2 {
+			return msg.ErrApiNetwork, fmt.Errorf(msg.GetMsg(msg.ErrApiNetwork))
+		} else if 0 != userInfoResp.Code {
+			return msg.ErrApiPermission, fmt.Errorf(msg.GetMsg(msg.ErrApiPermission))
 		}
 
-		if _, err = setConfig(sysConfig.CSAE.Dir, userInfoResp.Data.Nickname); nil != err {
-			return msg.ErrWriteConfig, err
+		if _, err3 := setConfig(sysConfig.CSAE.Dir, userInfoResp.Data.Nickname); nil != err3 {
+			return msg.ErrWriteConfig, err3
 		}
 
-		return LaunchGameOnline(sysConfig.CSAE.Full, config.Option, config.Host, pwdResp.Data.ServerPass)
+		return LaunchGameOnline(sysConfig.CSAE.Full, config.Option, config.Host, serverPassword)
 	}
 }
 

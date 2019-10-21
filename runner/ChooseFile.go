@@ -2,14 +2,14 @@ package runner
 
 import (
 	"CSAELauncherPlugin/utils"
-	"fmt"
+	log "github.com/sirupsen/logrus"
 	"os"
 )
 
 func ChooseFile() {
 	path, _ := utils.ChooseFile()
 
-	fmt.Println(path)
+	log.WithField("component", "Choose File").Info("CSAE: ", path)
 
 	os.Exit(0)
 }

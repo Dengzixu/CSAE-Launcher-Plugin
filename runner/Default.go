@@ -6,7 +6,6 @@ import (
 )
 
 func Default() {
-
 	flag.PrintDefaults()
 	os.Exit(0)
 }

@@ -3,6 +3,7 @@ package main
 
 import (
 	"CSAELauncherPlugin/common/Init"
+	"CSAELauncherPlugin/common/global"
 	"CSAELauncherPlugin/runner"
 	"flag"
 	"fmt"
@@ -32,6 +33,10 @@ func (p *program) Init(env svc.Environment) error {
 	// 第一次启动初始化
 	Init.First()
 
+	// 检查更新
+	Init.CheckUpdate()
+
+	// 进如主程序代码段
 	help := flag.Bool("h", true, "获取帮助")
 
 	chooseFile := flag.Bool("c", false, "选择 CSAE 程序路径")
@@ -56,6 +61,7 @@ func (p *program) Init(env svc.Environment) error {
 		break
 	case *server:
 		fmt.Println("注意: 此窗口非常重要，请不要关闭。")
+		global.IsService = env.IsWindowsService()
 		if !env.IsWindowsService() {
 			log.Warn("提示: 如果您 不是 网吧用户，建议您通过安装包进行安装。")
 		}

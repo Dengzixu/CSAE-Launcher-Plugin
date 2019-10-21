@@ -1,7 +1,7 @@
 package controller
 
 import (
-	msg "CSAELauncherPlugin/common"
+	msg2 "CSAELauncherPlugin/common/msg"
 	"CSAELauncherPlugin/entity"
 	"CSAELauncherPlugin/utils"
 	"github.com/gin-gonic/gin"
@@ -12,7 +12,7 @@ func LaunchController(context *gin.Context) {
 	launchParam := &entity.LaunchConfig{}
 
 	if err := context.BindJSON(&launchParam); nil != err {
-		context.JSON(http.StatusBadRequest, entity.RespBody(msg.ErrApiParam, false, nil))
+		context.JSON(http.StatusBadRequest, entity.RespBody(msg2.ErrApiParam, false, nil))
 	}
 
 	if rCode, err := utils.LaunchGame(launchParam); nil != err {
@@ -26,12 +26,4 @@ func LaunchController(context *gin.Context) {
 func ChooseFileController(context *gin.Context) {
 	context.String(http.StatusOK, "功能弃用")
 	return
-
-	//if filePath, err := utils.ChooseFile(); nil != err {
-	//	context.JSON(http.StatusOK, entity.RespBody(msg.ErrChooseFail, false, nil))
-	//} else if filePath == "cancel" {
-	//	context.JSON(http.StatusOK, entity.RespBody(msg.ErrChooseCancel, false, nil))
-	//} else {
-	//	context.JSON(http.StatusOK, entity.RespBody(msg.Success, true, filePath))
-	//}
 }

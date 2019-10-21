@@ -1,7 +1,8 @@
 package entity
 
 type LaunchConfig struct {
-	Host   string
-	Option string
-	Token  string
+	Host     string
+	Password string
+	Option   string
+	Token    string
 }

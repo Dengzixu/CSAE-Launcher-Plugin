@@ -21,6 +21,8 @@ const (
 	ErrApi = 0x03000100
 	// API权限错误
 	ErrApiPermission = 0x03000101
+	// API网络错误
+	ErrApiNetwork = 0x03000102
 
 	// 我TMD也不知道是啥错误
 	ErrUnknown = 0x0000FFFF
@@ -34,8 +36,9 @@ var msgTest = map[int]string{
 	ErrChooseCancel:  "路径选择取消",
 	ErrWriteConfig:   "创建配置文件失败",
 	ErrApiParam:      "参数错误",
-	ErrApi:           "API 错误, 请确认是否登录, 或登录是否过期",
-	ErrApiPermission: "API 错误",
+	ErrApi:           "API 错误",
+	ErrApiPermission: "API 错误, 请确认是否登录, 或登录是否过期",
+	ErrApiNetwork:    "API 错误, 请检查网络",
 	ErrUnknown:       "未知错误",
 }
 

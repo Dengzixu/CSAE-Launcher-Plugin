@@ -11,4 +11,11 @@ func Logger() {
 		HideKeys:    true,
 		FieldsOrder: []string{"component", "category", "req"},
 	})
+
+	file, err := os.OpenFile("e://log.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0755)
+	if err != nil {
+		log.Fatal(err)
+	}
+	//defer file.Close()
+	log.SetOutput(file)
 }

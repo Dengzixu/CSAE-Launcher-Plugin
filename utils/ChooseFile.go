@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"github.com/lxn/walk"
 )
 
@@ -16,6 +17,8 @@ func ChooseFile() (string, error) {
 	}
 
 	if err := WritePath(dlg.FilePath); nil != err {
+		fmt.Println(err)
+
 		return "写入配置文件失败", nil
 	}
 

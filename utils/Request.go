@@ -81,3 +81,30 @@ func GetUserInfo(token string) (*entity.ApiUserInfoResp, error) {
 
 	return &apiUserInfoResp, nil
 }
+
+func GetSecurityConfig() (*entity.SecurityConfig, error) {
+	securityConfig := entity.SecurityConfig{}
+
+	request, err := http.NewRequest("GET", "https://launcher.csae.link/api/plugin/security.json", nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	client := &http.Client{}
+
+	resp, err := client.Do(request)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+
+	_ = json.Unmarshal(bodyBytes, &securityConfig)
+
+	return &securityConfig, nil
+}
