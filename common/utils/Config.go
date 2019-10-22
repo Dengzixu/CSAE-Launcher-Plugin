@@ -41,7 +41,7 @@ func ReadConfig() *ConfigV1 {
 	return config
 }
 
-func WritePath(fullPath string) error {
+func WriteCSAEPath(fullPath string) error {
 	currentDir := configPath()
 
 	cfg, err := ini.Load(configPath())

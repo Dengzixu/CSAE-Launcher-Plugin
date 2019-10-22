@@ -16,7 +16,7 @@ func ChooseFile() (string, error) {
 		return "选择文件被取消", nil
 	}
 
-	if err := WritePath(dlg.FilePath); nil != err {
+	if err := WriteCSAEPath(dlg.FilePath); nil != err {
 		fmt.Println(err)
 
 		return "写入配置文件失败", nil
