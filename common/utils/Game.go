@@ -42,7 +42,7 @@ func LaunchGameOnline(path string, param string, host string, password string) (
 	if global.IsService {
 		dir, _ := filepath.Split(path)
 
-		StartProcessAsCurrentUser(path, param, dir, false)
+		_ = StartProcessAsCurrentUser(path, param, dir, false)
 
 		if err := StartProcessAsCurrentUser(path, param, dir, false); nil != err {
 			return msg.ErrLaunchFail, err
@@ -63,9 +63,8 @@ func LaunchGame(config *entity.LaunchConfig) (int, error) {
 	if "" == config.Host {
 		return LaunchGameOffline(sysConfig.CSAE.Full, config.Option)
 	} else {
-
 		// 密码方式
-		serverPassword := ""
+		var serverPassword string
 		switch config.Password {
 		// 启动器启动
 		case "#LAUNCHER#":

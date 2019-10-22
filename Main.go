@@ -36,7 +36,10 @@ func (p *program) Init(env svc.Environment) error {
 	// 检查更新
 	Init.CheckUpdate()
 
-	// 进如主程序代码段
+	// 初始化配置文件
+	//Init.Config()
+
+	// 进入主程序代码段
 	help := flag.Bool("h", true, "获取帮助")
 
 	chooseFile := flag.Bool("c", false, "选择 CSAE 程序路径")

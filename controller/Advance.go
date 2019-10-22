@@ -2,8 +2,8 @@ package controller
 
 import (
 	msg2 "CSAELauncherPlugin/common/msg"
+	"CSAELauncherPlugin/common/utils"
 	"CSAELauncherPlugin/entity"
-	"CSAELauncherPlugin/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

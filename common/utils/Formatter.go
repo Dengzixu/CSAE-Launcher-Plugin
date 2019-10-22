@@ -1,4 +1,4 @@
-package Init
+package utils
 
 import (
 	"bytes"

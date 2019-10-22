@@ -25,6 +25,8 @@ type ConfigV1 struct {
 	Security Security
 }
 
+var G ConfigV1
+
 func ReadConfig() *ConfigV1 {
 	config := &ConfigV1{}
 
@@ -33,6 +35,8 @@ func ReadConfig() *ConfigV1 {
 	}, configPath())
 
 	_ = cfg.MapTo(config)
+
+	G = *config
 
 	return config
 }
