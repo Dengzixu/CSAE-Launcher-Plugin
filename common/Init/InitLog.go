@@ -8,6 +8,7 @@ import (
 
 func Logger() {
 	log.SetOutput(os.Stdout)
+	log.SetLevel(log.DebugLevel)
 	log.SetFormatter(&utils.Formatter{
 		HideKeys:    true,
 		FieldsOrder: []string{"component", "category", "req"},

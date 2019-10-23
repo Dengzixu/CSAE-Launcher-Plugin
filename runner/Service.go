@@ -1,6 +1,7 @@
 package runner
 
 import (
+	"CSAELauncherPlugin/common/utils"
 	"CSAELauncherPlugin/controller"
 	"CSAELauncherPlugin/entity"
 	"github.com/gin-gonic/gin"
@@ -39,7 +40,7 @@ func Service() {
 	//err := router.Run("127.0.0.1:23232")
 
 	router.Use(tlsHandler())
-	err := router.RunTLS("127.0.0.1:23232", "./ssl/certificate.crt", "./ssl/key.pem")
+	err := router.RunTLS("127.0.0.1:23232", utils.GetBaseDir()+"/ssl/certificate.crt", utils.GetBaseDir()+"/ssl/key.pem")
 
 	if err != nil {
 		walk.MsgBox(nil, "CSAE Launcher Plugin", "错误: 初始化失败, 请检查是否运行了多个程序，如果无法解决，请联系开发人员。", walk.MsgBoxIconError)

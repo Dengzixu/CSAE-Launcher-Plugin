@@ -37,7 +37,7 @@ func (p *program) Init(env svc.Environment) error {
 	Init.CheckUpdate()
 
 	// 初始化配置文件
-	//Init.Config()
+	Init.Config()
 
 	// 进入主程序代码段
 	help := flag.Bool("h", true, "获取帮助")

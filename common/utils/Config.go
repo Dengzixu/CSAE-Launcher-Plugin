@@ -1,9 +1,7 @@
 package utils
 
 import (
-	"fmt"
 	"gopkg.in/ini.v1"
-	"os"
 	"path/filepath"
 )
 
@@ -46,13 +44,11 @@ func WriteCSAEPath(fullPath string) error {
 
 	cfg, err := ini.Load(configPath())
 
-	csaeDir, csaeExe := filepath.Split(fullPath)
-
-	fmt.Println("configPath: ", configPath())
 	if nil != err {
 		return err
 	}
 
+	csaeDir, csaeExe := filepath.Split(fullPath)
 	cfg.Section("CSAE").Key("exe").SetValue(csaeExe)
 	cfg.Section("CSAE").Key("dir").SetValue(csaeDir)
 	cfg.Section("CSAE").Key("full").SetValue(fullPath)
@@ -64,9 +60,7 @@ func WriteCSAEPath(fullPath string) error {
 }
 
 func configPath() string {
-	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
-
-	return dir + iniFile
+	return GetConfigDir() + iniFile
 }
 
 func CreateDefaultConfig() {

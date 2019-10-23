@@ -42,8 +42,6 @@ func LaunchGameOnline(path string, param string, host string, password string) (
 	if global.IsService {
 		dir, _ := filepath.Split(path)
 
-		_ = StartProcessAsCurrentUser(path, param, dir, false)
-
 		if err := StartProcessAsCurrentUser(path, param, dir, false); nil != err {
 			return msg.ErrLaunchFail, err
 		}
@@ -57,11 +55,11 @@ func LaunchGameOnline(path string, param string, host string, password string) (
 }
 
 func LaunchGame(config *entity.LaunchConfig) (int, error) {
-	sysConfig := ReadConfig()
+	sysConfig := G
 
 	// HOST 为空的话 就只启动游戏
 	if "" == config.Host {
-		return LaunchGameOffline(sysConfig.CSAE.Full, config.Option)
+		return LaunchGameOffline(G.CSAE.Full, config.Option)
 	} else {
 		// 密码方式
 		var serverPassword string
@@ -94,7 +92,7 @@ func LaunchGame(config *entity.LaunchConfig) (int, error) {
 			return msg.ErrWriteConfig, err3
 		}
 
-		return LaunchGameOnline(sysConfig.CSAE.Full, config.Option, config.Host, serverPassword)
+		return LaunchGameOnline(G.CSAE.Full, config.Option, config.Host, serverPassword)
 	}
 }
 

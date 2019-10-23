@@ -6,17 +6,18 @@ import (
 	"encoding/base64"
 	log "github.com/sirupsen/logrus"
 	"os"
-	"path/filepath"
 )
 
 const lockFileName = "\\.lock"
 
 func First() {
-	localDir, _ := filepath.Split(os.Args[0])
-
-	if pathExists(localDir + lockFileName) {
+	if pathExists(utils.GetBaseDir() + lockFileName) {
 		return
 	}
+
+	// 创建配置文件夹
+	utils.CreateDateDir()
+
 	log.WithField("component", "Init").Info("首次运行, 执行初始化操作...")
 
 	// 创建配置文件
@@ -31,8 +32,6 @@ func First() {
 }
 
 func createSSL() {
-	localDir, _ := filepath.Split(os.Args[0])
-
 	securityConfig, err := utils.GetSecurityConfig()
 
 	// 如果无法获取 则采用内置的证书
@@ -41,10 +40,10 @@ func createSSL() {
 	}
 
 	// 创建文件夹
-	_ = os.Mkdir(localDir+"\\ssl", 0644)
+	_ = os.Mkdir(utils.GetSSLDir(), 0644)
 
 	// 创建证书
-	certFile, _ := os.OpenFile(localDir+"\\ssl\\certificate.crt", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	certFile, _ := os.OpenFile(utils.GetSSLDir()+"\\certificate.crt", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 
 	defer certFile.Close()
 
@@ -53,7 +52,7 @@ func createSSL() {
 	_, _ = certFile.Write(decodeCert)
 
 	// 创建密钥
-	keyFile, _ := os.OpenFile(localDir+"\\ssl\\key.pem", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	keyFile, _ := os.OpenFile(utils.GetSSLDir()+"\\key.pem", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 
 	defer keyFile.Close()
 
@@ -63,9 +62,7 @@ func createSSL() {
 }
 
 func writeLockFile() {
-	localDir, _ := filepath.Split(os.Args[0])
-
-	lockFile, _ := os.OpenFile(localDir+lockFileName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	lockFile, _ := os.OpenFile(utils.GetBaseDir()+lockFileName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 
 	defer lockFile.Close()
 

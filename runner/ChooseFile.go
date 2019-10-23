@@ -7,9 +7,13 @@ import (
 )
 
 func ChooseFile() {
-	path, _ := utils.ChooseFile()
+	path, err := utils.ChooseFile()
 
-	log.WithField("component", "Choose File").Info("CSAE: ", path)
+	if nil != err {
+		log.WithField("component", "Choose File").Error(err)
+	}
+
+	log.WithField("component", "Choose File").Info(path)
 
 	os.Exit(0)
 }
