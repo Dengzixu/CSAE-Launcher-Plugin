@@ -1,6 +1,7 @@
 package utils
 
 import (
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/ini.v1"
 	"path/filepath"
 )
@@ -23,8 +24,6 @@ type ConfigV1 struct {
 	Security Security
 }
 
-var G ConfigV1
-
 func ReadConfig() *ConfigV1 {
 	config := &ConfigV1{}
 
@@ -32,9 +31,9 @@ func ReadConfig() *ConfigV1 {
 		IgnoreContinuation: true,
 	}, configPath())
 
-	_ = cfg.MapTo(config)
+	log.Info(configPath())
 
-	G = *config
+	_ = cfg.MapTo(config)
 
 	return config
 }

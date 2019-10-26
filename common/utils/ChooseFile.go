@@ -12,12 +12,14 @@ func ChooseFile() (string, error) {
 	dlg.ShowReadOnlyCB = true
 
 	if ok, err := dlg.ShowOpen(nil); err != nil {
-		return "", err
+		walk.MsgBox(nil, "错误", "无法创建配置文件", walk.MsgBoxIconError)
 	} else if !ok {
+		walk.MsgBox(nil, "警告", "无法创建配置文件", walk.MsgBoxIconError)
 		return "选择文件被取消", errors.New("choose file was be cancel")
 	}
 
 	if err := WriteCSAEPath(dlg.FilePath); nil != err {
+		walk.MsgBox(nil, "错误", "无法创建配置文件", walk.MsgBoxIconError)
 		return "写入配置文件失败", err
 	}
 

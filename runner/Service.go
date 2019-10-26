@@ -4,6 +4,7 @@ import (
 	"CSAELauncherPlugin/common/utils"
 	"CSAELauncherPlugin/controller"
 	"CSAELauncherPlugin/entity"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/lxn/walk"
 	log "github.com/sirupsen/logrus"
@@ -12,7 +13,7 @@ import (
 	"os"
 )
 
-const VERSION = "0.0.1"
+const VERSION = "0.0.5"
 const CHANNEL = "alpha"
 
 func Service() {
@@ -40,9 +41,10 @@ func Service() {
 	//err := router.Run("127.0.0.1:23232")
 
 	router.Use(tlsHandler())
-	err := router.RunTLS("127.0.0.1:23232", utils.GetBaseDir()+"/ssl/certificate.crt", utils.GetBaseDir()+"/ssl/key.pem")
+	err := router.RunTLS("127.0.0.1:23232", utils.GetSSLDir()+"\\certificate.crt", utils.GetSSLDir()+"\\key.pem")
 
 	if err != nil {
+		fmt.Println(err)
 		walk.MsgBox(nil, "CSAE Launcher Plugin", "错误: 初始化失败, 请检查是否运行了多个程序，如果无法解决，请联系开发人员。", walk.MsgBoxIconError)
 		log.WithField("component", "Web").Error("初始化失败: 无法创建服务")
 		os.Exit(2)

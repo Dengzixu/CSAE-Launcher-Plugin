@@ -2,10 +2,11 @@ package utils
 
 import (
 	"os"
+	"path/filepath"
 )
 
 const (
-	dBase   = "\\.csae\\launcher"
+	dBase   = "\\.csae"
 	dConfig = "\\config"
 	dSSL    = "\\ssl"
 )
@@ -17,8 +18,7 @@ const (
 )
 
 func getDir(t string) (destDir string) {
-	userHomeDir, _ := os.UserHomeDir()
-	
+	userHomeDir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 	baseDir := userHomeDir + dBase
 
 	switch t {
@@ -46,7 +46,7 @@ func GetSSLDir() string {
 }
 
 func CreateDateDir() {
-	dir, _ := os.UserHomeDir()
+	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 	// 创建基本目录
 	_ = os.MkdirAll(dir+dBase, 0644)
 	// 创建配置目录

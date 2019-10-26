@@ -55,11 +55,11 @@ func LaunchGameOnline(path string, param string, host string, password string) (
 }
 
 func LaunchGame(config *entity.LaunchConfig) (int, error) {
-	sysConfig := G
+	sysConfig := ReadConfig()
 
 	// HOST 为空的话 就只启动游戏
 	if "" == config.Host {
-		return LaunchGameOffline(G.CSAE.Full, config.Option)
+		return LaunchGameOffline(sysConfig.CSAE.Full, config.Option)
 	} else {
 		// 密码方式
 		var serverPassword string
@@ -92,7 +92,7 @@ func LaunchGame(config *entity.LaunchConfig) (int, error) {
 			return msg.ErrWriteConfig, err3
 		}
 
-		return LaunchGameOnline(G.CSAE.Full, config.Option, config.Host, serverPassword)
+		return LaunchGameOnline(sysConfig.CSAE.Full, config.Option, config.Host, serverPassword)
 	}
 }
 
@@ -104,10 +104,11 @@ cl_updaterate "100"
 console "1.0"
 fps_max "100"
 rate "25000"
+name "%s"
+alias name
 `
 
-	userConfig += "name " + username + "\n" +
-		"alias name"
+	userConfig = fmt.Sprintf(userConfig, username)
 
 	userConfigFile, err := os.OpenFile(dir+"\\cstrike_schinese\\userconfig.cfg", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 
