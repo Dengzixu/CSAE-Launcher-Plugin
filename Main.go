@@ -6,9 +6,9 @@ import (
 	"CSAELauncherPlugin/common/global"
 	"CSAELauncherPlugin/runner"
 	"flag"
-	"fmt"
 	"github.com/judwhite/go-svc/svc"
 	log "github.com/sirupsen/logrus"
+	"os"
 	"sync"
 )
 
@@ -36,9 +36,6 @@ func (p *program) Init(env svc.Environment) error {
 	// 检查更新
 	Init.CheckUpdate()
 
-	// 初始化配置文件
-	//Init.Config()
-
 	// 进入主程序代码段
 	help := flag.Bool("h", true, "获取帮助")
 
@@ -46,7 +43,9 @@ func (p *program) Init(env svc.Environment) error {
 	setFile := flag.String("C", "", "设置 CSAE `程序路径`")
 
 	runGame := flag.Bool("l", false, "运行离线游戏")
-	server := flag.Bool("s", false, "运行服务")
+
+	portable := flag.Bool("p", false, "以 便携模式 运行")
+	server := flag.Bool("s", false, "以 服务模式 运行")
 
 	flag.Parse()
 
@@ -62,18 +61,21 @@ func (p *program) Init(env svc.Environment) error {
 	case *runGame:
 		runner.UnSupport()
 		break
+	case *portable:
+		//TODO: 便携模式
+		global.IsService = false
+		runner.Portable()
 	case *server:
-		fmt.Println("注意: 此窗口非常重要，请不要关闭。")
 		global.IsService = env.IsWindowsService()
 		if !env.IsWindowsService() {
-			log.Warn("提示: 如果您 不是 网吧用户，建议您通过安装包进行安装。")
+			log.WithField("component", "SYSTEM").Error("非系统服务运行，退出。")
+			os.Exit(2)
 		}
 		go runner.Service()
 		break
 	case *help:
 		runner.Default()
 	}
-
 	return nil
 }
 

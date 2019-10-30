@@ -1,7 +1,6 @@
 package utils
 
 import (
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/ini.v1"
 	"path/filepath"
 )
@@ -30,8 +29,6 @@ func ReadConfig() *ConfigV1 {
 	cfg, _ := ini.LoadSources(ini.LoadOptions{
 		IgnoreContinuation: true,
 	}, configPath())
-
-	log.Info(configPath())
 
 	_ = cfg.MapTo(config)
 

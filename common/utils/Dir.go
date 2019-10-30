@@ -54,3 +54,14 @@ func CreateDateDir() {
 	// 创建安全目录
 	_ = os.MkdirAll(dir+dBase+dSSL, 0644)
 }
+
+func PathExists(path string) bool {
+	_, err := os.Stat(path)
+	if err != nil {
+		return false
+	} else if os.IsNotExist(err) {
+		return false
+	}
+
+	return true
+}

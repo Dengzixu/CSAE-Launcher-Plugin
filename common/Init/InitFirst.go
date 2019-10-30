@@ -11,7 +11,7 @@ import (
 const lockFileName = "\\.lock"
 
 func First() {
-	if pathExists(utils.GetBaseDir() + lockFileName) {
+	if utils.PathExists(utils.GetBaseDir() + lockFileName) {
 		return
 	}
 
@@ -67,15 +67,4 @@ func writeLockFile() {
 	defer lockFile.Close()
 
 	_, _ = lockFile.WriteString("")
-}
-
-func pathExists(path string) bool {
-	_, err := os.Stat(path)
-	if err != nil {
-		return false
-	} else if os.IsNotExist(err) {
-		return false
-	}
-
-	return true
 }
