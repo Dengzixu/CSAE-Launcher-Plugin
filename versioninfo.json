@@ -3,13 +3,13 @@
         "FileVersion": {
             "Major": 0,
             "Minor": 0,
-            "Patch": 6,
+            "Patch": 10,
             "Build": 0
         },
         "ProductVersion": {
             "Major": 0,
             "Minor": 0,
-            "Patch": 6,
+            "Patch": 10,
             "Build": 0
         },
         "FileFlagsMask": "3f",
@@ -29,7 +29,7 @@
         "OriginalFilename": "CSAE_launcher_Plugin",
         "PrivateBuild": "",
         "ProductName": "CSAE 启动器插件",
-        "ProductVersion": "0.0.6.0",
+        "ProductVersion": "0.0.10.0",
         "SpecialBuild": ""
     },
     "VarFileInfo": {

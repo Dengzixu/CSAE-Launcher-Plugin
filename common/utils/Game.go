@@ -35,7 +35,7 @@ func LaunchGameOffline(path string, param string) (int, error) {
 
 func LaunchGameOnline(path string, param string, host string, password string) (int, error) {
 	if "" != password {
-		param += " +password \"" + password + "\""
+		param += " +password " + password
 	}
 	param += " +connect " + host
 

@@ -3,8 +3,8 @@ package runner
 import (
 	"CSAELauncherPlugin/common/utils"
 	"CSAELauncherPlugin/controller"
-	"CSAELauncherPlugin/entity"
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/lxn/walk"
 	log "github.com/sirupsen/logrus"
@@ -21,7 +21,14 @@ func Service() {
 
 	router := gin.Default()
 
-	router.Use(entity.Cors())
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"https://hlds.zixutech.cn"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "UPDATE", "OPTIONS"},
+		AllowHeaders:     []string{"*"},
+		AllowCredentials: false,
+		ExposeHeaders:    []string{"*"},
+		MaxAge:           60 * 60 * 24 * 7, // 七天
+	}))
 
 	router.GET("/ping", func(context *gin.Context) {
 		context.String(http.StatusOK, "pong")
