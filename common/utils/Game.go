@@ -1,9 +1,9 @@
 package utils
 
 import (
-	"CSAELauncherPlugin/common/global"
-	"CSAELauncherPlugin/common/msg"
-	"CSAELauncherPlugin/entity"
+	"CSAE-Launcher-Plugin/common/global"
+	"CSAE-Launcher-Plugin/common/msg"
+	"CSAE-Launcher-Plugin/entity"
 	"fmt"
 	"os"
 	"os/exec"

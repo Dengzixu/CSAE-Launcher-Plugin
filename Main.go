@@ -2,9 +2,9 @@
 package main
 
 import (
-	"CSAELauncherPlugin/common/Init"
-	"CSAELauncherPlugin/common/global"
-	"CSAELauncherPlugin/runner"
+	"CSAE-Launcher-Plugin/common/Init"
+	"CSAE-Launcher-Plugin/common/global"
+	"CSAE-Launcher-Plugin/runner"
 	"flag"
 	"github.com/judwhite/go-svc/svc"
 	log "github.com/sirupsen/logrus"

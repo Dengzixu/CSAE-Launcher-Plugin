@@ -1,7 +1,7 @@
 package entity
 
 import (
-	msg2 "CSAELauncherPlugin/common/msg"
+	msg2 "CSAE-Launcher-Plugin/common/msg"
 )
 
 func RespBody(code int, success bool, data interface{}) map[string]interface{} {

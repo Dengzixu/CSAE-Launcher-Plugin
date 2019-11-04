@@ -1,8 +1,8 @@
 package runner
 
 import (
-	"CSAELauncherPlugin/common/utils"
-	"CSAELauncherPlugin/controller"
+	"CSAE-Launcher-Plugin/common/utils"
+	"CSAE-Launcher-Plugin/controller"
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
