@@ -2,9 +2,9 @@
 package main
 
 import (
-	"CSAE-Launcher-Plugin/common/Init"
-	"CSAE-Launcher-Plugin/common/global"
-	"CSAE-Launcher-Plugin/runner"
+	"CSAE-Launcher-Plugin/src/common/Init"
+	"CSAE-Launcher-Plugin/src/common/global"
+	"CSAE-Launcher-Plugin/src/runner"
 	"flag"
 	"github.com/judwhite/go-svc/svc"
 	log "github.com/sirupsen/logrus"
@@ -62,7 +62,6 @@ func (p *program) Init(env svc.Environment) error {
 		runner.UnSupport()
 		break
 	case *portable:
-		//TODO: 便携模式
 		global.IsService = false
 		runner.Portable()
 	case *server:

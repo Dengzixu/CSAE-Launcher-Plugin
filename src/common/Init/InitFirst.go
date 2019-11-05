@@ -1,8 +1,8 @@
 package Init
 
 import (
-	"CSAE-Launcher-Plugin/common/utils"
-	"CSAE-Launcher-Plugin/entity"
+	"CSAE-Launcher-Plugin/src/common/utils"
+	"CSAE-Launcher-Plugin/src/entity"
 	"encoding/base64"
 	log "github.com/sirupsen/logrus"
 	"os"

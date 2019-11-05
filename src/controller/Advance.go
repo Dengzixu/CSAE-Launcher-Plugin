@@ -1,9 +1,9 @@
 package controller
 
 import (
-	msg2 "CSAE-Launcher-Plugin/common/msg"
-	"CSAE-Launcher-Plugin/common/utils"
-	"CSAE-Launcher-Plugin/entity"
+	"CSAE-Launcher-Plugin/src/common/msg"
+	"CSAE-Launcher-Plugin/src/common/utils"
+	"CSAE-Launcher-Plugin/src/entity"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -12,7 +12,7 @@ func LaunchController(context *gin.Context) {
 	launchParam := &entity.LaunchConfig{}
 
 	if err := context.BindJSON(&launchParam); nil != err {
-		context.JSON(http.StatusBadRequest, entity.RespBody(msg2.ErrApiParam, false, nil))
+		context.JSON(http.StatusBadRequest, entity.RespBody(msg.ErrApiParam, false, nil))
 	}
 
 	if rCode, err := utils.LaunchGame(launchParam); nil != err {

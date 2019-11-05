@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"CSAE-Launcher-Plugin/entity"
+	"CSAE-Launcher-Plugin/src/entity"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"

@@ -1,7 +1,7 @@
 package runner
 
 import (
-	"CSAE-Launcher-Plugin/common/utils"
+	"CSAE-Launcher-Plugin/src/common/utils"
 	log "github.com/sirupsen/logrus"
 	"os"
 )

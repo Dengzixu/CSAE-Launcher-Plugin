@@ -1,7 +1,7 @@
 package runner
 
 import (
-	"CSAE-Launcher-Plugin/common/utils"
+	"CSAE-Launcher-Plugin/src/common/utils"
 	"fmt"
 	"github.com/lxn/walk"
 )
