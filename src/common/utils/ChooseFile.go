@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"errors"
+	"CSAE-Launcher-Plugin/src/common/errorEx"
 	"github.com/lxn/walk"
 )
 
@@ -12,15 +12,13 @@ func ChooseFile() (string, error) {
 	dlg.ShowReadOnlyCB = true
 
 	if ok, err := dlg.ShowOpen(nil); err != nil {
-		walk.MsgBox(nil, "错误", "无法创建配置文件", walk.MsgBoxIconError)
+		return "", errorEx.New(errorEx.ChooseFailed)
 	} else if !ok {
-		walk.MsgBox(nil, "警告", "无法创建配置文件", walk.MsgBoxIconError)
-		return "选择文件被取消", errors.New("choose file was be cancel")
+		return "", errorEx.New(errorEx.ChooseCancel)
 	}
 
 	if err := WriteCSAEPath(dlg.FilePath); nil != err {
-		walk.MsgBox(nil, "错误", "无法创建配置文件", walk.MsgBoxIconError)
-		return "写入配置文件失败", err
+		return "", errorEx.New(errorEx.ConfigFileWriteFail)
 	}
 
 	return dlg.FilePath, nil

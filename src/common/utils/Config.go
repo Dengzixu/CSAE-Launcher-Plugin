@@ -1,6 +1,9 @@
 package utils
 
 import (
+	"CSAE-Launcher-Plugin/src/common/Logs"
+	"CSAE-Launcher-Plugin/src/common/errorEx"
+	"go.uber.org/zap"
 	"gopkg.in/ini.v1"
 	"path/filepath"
 )
@@ -26,9 +29,15 @@ type ConfigV1 struct {
 func ReadConfig() *ConfigV1 {
 	config := &ConfigV1{}
 
-	cfg, _ := ini.LoadSources(ini.LoadOptions{
+	cfg, err := ini.LoadSources(ini.LoadOptions{
 		IgnoreContinuation: true,
 	}, configPath())
+
+	if nil != err {
+		Logs.G.Error("Can not load config file", zap.Error(err))
+		return nil
+		//return errorEx.New(errorEx.ConfigFileLoadFail)
+	}
 
 	_ = cfg.MapTo(config)
 
@@ -36,12 +45,11 @@ func ReadConfig() *ConfigV1 {
 }
 
 func WriteCSAEPath(fullPath string) error {
-	currentDir := configPath()
-
 	cfg, err := ini.Load(configPath())
 
 	if nil != err {
-		return err
+		Logs.G.Error("Can not load config file", zap.Error(err))
+		return errorEx.New(errorEx.ConfigFileLoadFail)
 	}
 
 	csaeDir, csaeExe := filepath.Split(fullPath)
@@ -49,8 +57,9 @@ func WriteCSAEPath(fullPath string) error {
 	cfg.Section("CSAE").Key("dir").SetValue(csaeDir)
 	cfg.Section("CSAE").Key("full").SetValue(fullPath)
 
-	if cfg.SaveTo(currentDir) != nil {
-		return err
+	if err := cfg.SaveTo(configPath()); err != nil {
+		Logs.G.Error("Can not write config file", zap.Error(err))
+		return errorEx.New(errorEx.ConfigFileWriteFail)
 	}
 	return nil
 }
@@ -72,7 +81,11 @@ func CreateDefaultConfig() {
 
 	cfg := ini.Empty()
 
+	// 这里理论上不会出现错误，忽略之
 	_ = ini.ReflectFrom(cfg, config)
 
-	_ = cfg.SaveTo(configPath())
+	if err := cfg.SaveTo(configPath()); err != nil {
+		Logs.G.Error("Can not write config file", zap.Error(err))
+		//return errorEx.New(errorEx.ConfigFileWriteFail)
+	}
 }

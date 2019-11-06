@@ -1,20 +1,19 @@
 package runner
 
 import (
+	"CSAE-Launcher-Plugin/src/common/Logs"
 	"CSAE-Launcher-Plugin/src/common/utils"
 	"CSAE-Launcher-Plugin/src/controller"
-	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/lxn/walk"
-	log "github.com/sirupsen/logrus"
 	"github.com/unrolled/secure"
+	"go.uber.org/zap"
 	"net/http"
 	"os"
 )
 
-const VERSION = "0.0.5"
-const CHANNEL = "alpha"
+const VERSION = "0.0.11"
+const CHANNEL = "beta"
 
 func Service() {
 	gin.SetMode(gin.ReleaseMode)
@@ -23,9 +22,9 @@ func Service() {
 
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"https://hlds.zixutech.cn"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "UPDATE", "OPTIONS"},
+		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
 		AllowHeaders:     []string{"*"},
-		AllowCredentials: false,
+		AllowCredentials: true,
 		ExposeHeaders:    []string{"*"},
 		MaxAge:           60 * 60 * 24 * 7, // 七天
 	}))
@@ -43,17 +42,13 @@ func Service() {
 
 	router.POST("/launch", controller.LaunchController)
 
-	router.GET("/choose", controller.ChooseFileController)
-
 	//err := router.Run("127.0.0.1:23232")
 
 	router.Use(tlsHandler())
 	err := router.RunTLS("127.0.0.1:23232", utils.GetSSLDir()+"\\certificate.crt", utils.GetSSLDir()+"\\key.pem")
 
 	if err != nil {
-		fmt.Println(err)
-		walk.MsgBox(nil, "CSAE Launcher Plugin", "错误: 初始化失败, 请检查是否运行了多个程序，如果无法解决，请联系开发人员。", walk.MsgBoxIconError)
-		log.WithField("component", "Web").Error("初始化失败: 无法创建服务")
+		Logs.G.Error("Init web server failed", zap.Error(err))
 		os.Exit(2)
 	}
 }

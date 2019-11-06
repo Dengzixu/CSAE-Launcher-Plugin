@@ -1,13 +1,17 @@
 package Init
 
 import (
+	"CSAE-Launcher-Plugin/src/common/Logs"
 	"CSAE-Launcher-Plugin/src/common/utils"
+	"github.com/mattn/go-colorable"
 	log "github.com/sirupsen/logrus"
-	"os"
 )
 
 func Logger() {
-	log.SetOutput(os.Stdout)
+	Logs.Init()
+
+	//log.SetOutput(os.Stdout)
+	log.SetOutput(colorable.NewColorableStdout())
 	log.SetLevel(log.DebugLevel)
 	log.SetFormatter(&utils.Formatter{
 		HideKeys:    true,

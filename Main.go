@@ -3,11 +3,11 @@ package main
 
 import (
 	"CSAE-Launcher-Plugin/src/common/Init"
+	"CSAE-Launcher-Plugin/src/common/Logs"
 	"CSAE-Launcher-Plugin/src/common/global"
 	"CSAE-Launcher-Plugin/src/runner"
 	"flag"
 	"github.com/judwhite/go-svc/svc"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"sync"
 )
@@ -22,7 +22,7 @@ func main() {
 
 	// Call svc.Run to start your program/service.
 	if err := svc.Run(prg); err != nil {
-		log.Fatal(err)
+		Logs.G.Fatal(err)
 	}
 }
 
@@ -67,7 +67,7 @@ func (p *program) Init(env svc.Environment) error {
 	case *server:
 		global.IsService = env.IsWindowsService()
 		if !env.IsWindowsService() {
-			log.WithField("component", "SYSTEM").Error("非系统服务运行，退出。")
+			Logs.G.Error("This mode only run as Windows Service")
 			os.Exit(2)
 		}
 		go runner.Service()
@@ -85,9 +85,9 @@ func (p *program) Start() error {
 
 	p.wg.Add(1)
 	go func() {
-		log.WithField("component", "Service Control").Info("正在启动服务...")
+		Logs.G.Infow("Init Windows Service...")
 		<-p.quit
-		log.WithField("component", "Service Control").Info("收到退出信号...")
+		Logs.G.Infow("Quit signal received...")
 		p.wg.Done()
 	}()
 
@@ -98,9 +98,9 @@ func (p *program) Stop() error {
 	// The Stop method is invoked by stopping the Windows service, or by pressing Ctrl+C on the console.
 	// This method may block, but it's a good idea to finish quickly or your process may be killed by
 	// Windows during a shutdown/reboot. As a general rule you shouldn't rely on graceful shutdown.
-	log.WithField("component", "Service Control").Info("正在停止服务...")
+	Logs.G.Infow("Stopping...")
 	close(p.quit)
 	p.wg.Wait()
-	log.WithField("component", "Service Control").Info("服务停止.")
+	Logs.G.Infow("Stopped.")
 	return nil
 }

@@ -9,13 +9,17 @@ const (
 	dBase   = "\\.csae"
 	dConfig = "\\config"
 	dSSL    = "\\ssl"
+	dLog    = "\\log"
 )
 
 const (
 	tBase   = "tBase"
 	tConfig = "tConfig"
 	tSSL    = "tSSL"
+	tLog    = "tLog"
 )
+
+const defaultFilePermission = 0644
 
 func getDir(t string) (destDir string) {
 	userHomeDir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
@@ -28,6 +32,8 @@ func getDir(t string) (destDir string) {
 		return baseDir + dConfig
 	case tSSL:
 		return baseDir + dSSL
+	case tLog:
+		return baseDir + dLog
 	}
 
 	return ""
@@ -45,14 +51,17 @@ func GetSSLDir() string {
 	return getDir(tSSL)
 }
 
+func GetLogDir() string {
+	return getDir(tLog)
+}
+
 func CreateDateDir() {
-	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 	// 创建基本目录
-	_ = os.MkdirAll(dir+dBase, 0644)
+	_ = os.MkdirAll(GetBaseDir(), defaultFilePermission)
 	// 创建配置目录
-	_ = os.MkdirAll(dir+dBase+dConfig, 0644)
+	_ = os.MkdirAll(GetConfigDir(), defaultFilePermission)
 	// 创建安全目录
-	_ = os.MkdirAll(dir+dBase+dSSL, 0644)
+	_ = os.MkdirAll(GetSSLDir(), defaultFilePermission)
 }
 
 func PathExists(path string) bool {

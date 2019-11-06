@@ -1,10 +1,10 @@
 package Init
 
 import (
+	"CSAE-Launcher-Plugin/src/common/Logs"
 	"CSAE-Launcher-Plugin/src/common/utils"
 	"CSAE-Launcher-Plugin/src/entity"
 	"encoding/base64"
-	log "github.com/sirupsen/logrus"
 	"os"
 )
 
@@ -18,14 +18,14 @@ func First() {
 	// 创建配置文件夹
 	utils.CreateDateDir()
 
-	log.WithField("component", "Init").Info("首次运行, 执行初始化操作...")
+	Logs.G.Infow("首次运行, 执行初始化操作...")
 
 	// 创建配置文件
-	log.WithField("component", "Init").Info("创建配置文件...")
+	Logs.G.Infow("创建配置文件...")
 	utils.CreateDefaultConfig()
 
 	// 创建证书
-	log.WithField("component", "Init").Info("创建安全证书...")
+	Logs.G.Infow("创建安全证书...")
 	createSSL()
 
 	writeLockFile()
@@ -38,9 +38,6 @@ func createSSL() {
 	if nil != err {
 		securityConfig = entity.InnerSecurityConfig()
 	}
-
-	// 创建文件夹
-	_ = os.Mkdir(utils.GetSSLDir(), 0644)
 
 	// 创建证书
 	certFile, _ := os.OpenFile(utils.GetSSLDir()+"\\certificate.crt", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
